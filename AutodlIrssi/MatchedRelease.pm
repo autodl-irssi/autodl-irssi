@@ -311,8 +311,6 @@ sub _onTorrentDownloaded {
 		return;
 	}
 	else {
-		$self->_addDownload();
-
 		message(3, "Matched " . $self->_getTorrentInfoString());
 
 		if ($self->{ti}{filter}{maxDownloads} >= 0) {
@@ -382,6 +380,8 @@ sub _onTorrentUploadWait {
 # Called when the torrent file has been successfully downloaded
 sub _onTorrentFileDownloaded {
 	my $self = shift;
+
+	return if !$self->_canDownload();
 
 	my %funcs = (
 		lc AutodlIrssi::Constants::UPLOAD_WATCH_FOLDER()	=> \&_saveTorrentFile,
@@ -730,6 +730,7 @@ sub _addDownload {
 sub _onTorrentFileUploaded {
 	my ($self, $message) = @_;
 
+	$self->_addDownload();
 	$self->_displayTotalTime(scalar gettimeofday(), $message);
 }
 
